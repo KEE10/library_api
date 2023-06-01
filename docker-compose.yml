@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    # command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    environment:
+      DB_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db/${DB_NAME}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
